@@ -47,6 +47,9 @@ async def main() -> None:
             st.session_state.data = []
             start_time = time.perf_counter()
 
+            # Install required browsers
+            await asyncio.create_subprocess_exec("playwright", "install")
+
             try:
                 async with async_playwright() as playwright:
                     browser = await playwright.firefox.launch(headless=True, slow_mo=500)
