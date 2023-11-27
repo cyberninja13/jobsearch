@@ -1,5 +1,5 @@
 import streamlit as st
-from jobspy.jobs import Job  # adjust based on your actual module structure
+from jobspy.jobs.job_module import JobType, Location  # adjust based on your actual module structure
 
 def main():
     st.title("JobSpy Streamlit App")
@@ -10,12 +10,9 @@ def main():
     # Input for Location
     location = st.text_input("Enter Location", "New York")
 
-    # Create Job instance with user inputs
-    job = Job(job_search, location)
-
-    # Display Job information
-    st.write(f"Job Title: {job.title}")
-    st.write(f"Location: {job.location}")
+    # Use JobType and Location as needed
+    selected_job_type = st.selectbox("Select Job Type", list(JobType))
+    selected_location = st.selectbox("Select Location", list(Location))
 
     # Continue with the rest of your app logic...
 
