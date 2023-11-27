@@ -6,6 +6,7 @@ from rich.table import Table
 from rich.console import Console
 
 # Function to scrape job description
+@st.cache(show_spinner=False)
 def scrapeJobDescription(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -16,6 +17,7 @@ def scrapeJobDescription(url):
         return ""
 
 # Function to scrape LinkedIn jobs
+@st.cache(show_spinner=False)
 def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
     jobs_per_page = 20
     counter = (page - 1) * jobs_per_page
