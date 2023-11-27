@@ -3,10 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from rich.table import Table
-from rich.console import Console
 
 # Function to scrape job description
-@st.cache(show_spinner=False)
 def scrapeJobDescription(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -17,7 +15,6 @@ def scrapeJobDescription(url):
         return ""
 
 # Function to scrape LinkedIn jobs
-@st.cache(show_spinner=False)
 def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
     jobs_per_page = 20
     counter = (page - 1) * jobs_per_page
@@ -26,7 +23,7 @@ def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
     scraped_jobs = []
 
     try:
-        url = f"https://www.linkedin.com/jobs/search/?&keywords={inputJobTitle}&location={inputJobLocation}&refresh=true&start={counter}"
+        url = f"https://www.linkedin.com/jobs/search/?&keywords={inputJobTitle}&location={inputJobLocation}&refresh=true&start="
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
