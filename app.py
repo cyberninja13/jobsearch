@@ -1,5 +1,11 @@
+# /jobsearch/app.py
+
 import streamlit as st
-from jobspy.jobs import JobType, Location, Job  # adjust based on your actual module structure
+from jobspy import scrape_jobs, JobType, Location, Job
+from jobspy.scrapers.indeed import IndeedScraper
+from jobspy.scrapers.ziprecruiter import ZipRecruiterScraper
+from jobspy.scrapers.glassdoor import GlassdoorScraper
+from jobspy.scrapers.linkedin import LinkedInScraper
 
 def main():
     st.title("JobSpy Streamlit App")
@@ -17,11 +23,11 @@ def main():
     # Create Job instance with user inputs
     job = Job(job_search, location)
 
-    # Display Job information
-    st.write(f"Job Title: {job.title}")
-    st.write(f"Location: {job.location}")
+    # Scrape jobs
+    scraped_jobs = scrape_jobs("indeed", job_search, location, job_type=selected_job_type)
 
-    # Continue with the rest of your app logic...
+    # Display scraped jobs
+    st.dataframe(scraped_jobs)
 
 if __name__ == "__main__":
     main()
