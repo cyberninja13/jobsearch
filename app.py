@@ -1,5 +1,5 @@
 import streamlit as st
-from jobspy.jobs import Job, Location, JobType
+from jobspy.jobs import Job
 
 def main():
     st.title("JobSpy Streamlit App")
@@ -13,9 +13,9 @@ def main():
     # Create Job instance with user inputs
     job = Job(job_search, location)
 
-    # Use Location and JobType as needed
-    selected_location = st.selectbox("Select Location", list(Location))
-    selected_job_type = st.selectbox("Select Job Type", list(JobType))
+    # Display Job information
+    st.write(f"Job Title: {job.title}")
+    st.write(f"Location: {job.location}")
 
     # Continue with the rest of your app logic...
 
