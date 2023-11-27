@@ -4,3 +4,8 @@ beautifulsoup4
 pandas
 numpy
 pydantic
+selenium
+BeautifulSoup
+pandas
+asyncio
+rich
