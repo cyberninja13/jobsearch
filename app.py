@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from rich.console import Console
 from rich.table import Table
 
 # Function to scrape job description
@@ -42,13 +43,13 @@ def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
 
         return scraped_jobs
 
-    except Exception as e:
+    except requests.RequestException as e:
         st.error(f"An error occurred: {e}")
         return []
 
 # Streamlit UI
 def main():
-    st.title("indeed Job Scraper")
+    st.title("Indeed Job Scraper")
 
     # Get user input using Streamlit
     inputJobTitle = st.text_input("Enter Job Title:")
@@ -57,11 +58,12 @@ def main():
     # Get page number from user input
     page = st.number_input("Enter Page Number:", min_value=1, value=1, step=1)
 
-    if st.button("Scrape indeed"):
+    if st.button("Scrape Indeed"):
         scraped_jobs = scrapeLinkedin(inputJobTitle, inputJobLocation, page)
 
         # Display 20 jobs in a table
         if scraped_jobs:
+            console = Console()
             table = Table(show_header=True, header_style="bold")
             table.add_column("Title")
             table.add_column("Company")
@@ -72,8 +74,7 @@ def main():
             for job in scraped_jobs:
                 table.add_row(job[0], job[2], job[1], job[3], job[4][:20] + "...")
 
-            st.write("Scraped Jobs:")
-            st.table(table)
+            console.print(table)
 
             # Save results locally using Streamlit
             if st.button("Save Results Locally"):
