@@ -1,7 +1,7 @@
 # /jobsearch/app.py
 
 import streamlit as st
-from jobspy.jobs import JobPost, Location, JobType
+from jobspy.jobs.__init__ import JobPost, Location, JobType
 from jobspy.scrapers.indeed import IndeedScraper
 from jobspy.scrapers.ziprecruiter import ZipRecruiterScraper
 from jobspy.scrapers.glassdoor import GlassdoorScraper
