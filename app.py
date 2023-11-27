@@ -23,7 +23,7 @@ def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
     scraped_jobs = []
 
     try:
-        url = f"https://www.linkedin.com/jobs/search/?&keywords={inputJobTitle}&location={inputJobLocation}&refresh=true&start="
+        url = f"https://indeed.com/jobs?q={inputJobTitle}&l={inputJobLocation}&from=search"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
@@ -48,7 +48,7 @@ def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
 
 # Streamlit UI
 def main():
-    st.title("LinkedIn Job Scraper")
+    st.title("indeed Job Scraper")
 
     # Get user input using Streamlit
     inputJobTitle = st.text_input("Enter Job Title:")
@@ -57,7 +57,7 @@ def main():
     # Get page number from user input
     page = st.number_input("Enter Page Number:", min_value=1, value=1, step=1)
 
-    if st.button("Scrape LinkedIn"):
+    if st.button("Scrape indeed"):
         scraped_jobs = scrapeLinkedin(inputJobTitle, inputJobLocation, page)
 
         # Display 20 jobs in a table
