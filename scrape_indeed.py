@@ -3,7 +3,6 @@
 import csv
 import time
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
 def scrape_indeed_jobs(query, location, num_pages):
@@ -14,7 +13,14 @@ def scrape_indeed_jobs(query, location, num_pages):
 
     for start in start_list:
         url = base_url + f'/jobs?q={query}&l={location}&start={start}'
-        driver = webdriver.Chrome(ChromeDriverManager().install())
+        
+        # Specify the ChromeDriver version directly
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-gpu')
+        
+        # Use the relative path to chromedriver
+        driver = webdriver.Chrome(executable_path='drivers/chromedriver', options=chrome_options)
         driver.get(url)
         time.sleep(1)
     
