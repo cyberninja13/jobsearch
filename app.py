@@ -65,16 +65,22 @@ def main():
         job_data = scrape_indeed_jobs(query, location, num_pages)
         
         st.write("Scraped Job Data:")
-        st.write(job_data)
+        st.table(job_data)  # Display the data in a table
         
-        # Save the data to a CSV file
-        filename = f'{query}_{location}_job_results.csv'
-        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Job Title', 'Company', 'Location', 'Job Link', 'Salary'])
-            writer.writerows(job_data)
+        # You can also show the data in a more customized way, for example:
+        # for job in job_data:
+        #     st.write(f"Job Title: {job[0]}")
+        #     st.write(f"Company: {job[1]}")
+        #     st.write(f"Location: {job[2]}")
+        #     st.write(f"Job Link: {job[3]}")
+        #     st.write(f"Salary: {job[4]}")
+        #     st.write("---")
         
-        st.success(f"Data saved to {filename}")
+        # You can still save the data to a CSV file if needed, but it won't be necessary for display
+        # with open(f'{query}_{location}_job_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        #     writer = csv.writer(csvfile)
+        #     writer.writerow(['Job Title', 'Company', 'Location', 'Job Link', 'Salary'])
+        #     writer.writerows(job_data)
 
 # Run the Streamlit app
 if __name__ == "__main__":
