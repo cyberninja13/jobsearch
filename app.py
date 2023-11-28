@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import logging
-from playwright.async_api import async_playwright
 import pandas as pd
 from extract import run
 
@@ -31,15 +30,19 @@ def display_data() -> None:
         }
     )
 
-async def main() -> None:
+def run_playwright():
+    loop = st.experimental.thread.get_event_loop()
+    loop.run_until_complete(main())
+
+def main() -> None:
     """The `main` function uses Playwright to run a search query for a given term in the given location."""
     st.set_page_config(layout="wide")
     st.title("Search Jobs")
     positions = st.text_input("Enter comma separated position titles")
     location = st.text_input("Enter location")
 
-    col1, col2, col3 , col4, col5 = st.columns(5)
-    with col3 :
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col3:
         search = st.button('Search')
 
     if search:
@@ -47,15 +50,11 @@ async def main() -> None:
             st.session_state.data = []
             start_time = time.perf_counter()
 
-            async with async_playwright() as playwright:
-                await run(
-                    playwright,
-                    max_scroll=3,
-                    query=f"{str(positions)} in {str(location)}",
-                )
+            run(playwright, max_scroll=3, query=f"{str(positions)} in {str(location)}", browser=browser)
             display_data()
+                
             minutes = (time.perf_counter() - start_time) / 60
             logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
-    st.experimental.asyncio.run(main())
+    st.thread.run(run_playwright)
