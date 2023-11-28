@@ -3,19 +3,22 @@
 import csv
 import time
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
 def initiate_driver(location_of_driver, browser):
     if browser == 'chrome':
-        return webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver"))
+        # Use ChromeDriverManager for development, but specify the local path for deployment
+        if 'exe' in location_of_driver.lower():  # Check if the path contains ".exe" (Windows)
+            return webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver.exe"))
+        else:
+            return webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver"))
     else:
         raise ValueError("Unsupported browser type")
 
 def scrape_indeed_jobs(query, location, num_pages):
     start_list = [page * 10 for page in range(num_pages)]
     base_url = 'https://in.indeed.com'
-    location_of_driver = 'drivers'  # Update this with the correct path
+    location_of_driver = 'jobsearch/drivers'  # Update this with the correct path
     
     job_data = []
 
