@@ -5,6 +5,7 @@ import logging
 from playwright.async_api import async_playwright
 import pandas as pd
 from extract import run
+from xvfbwrapper import Xvfb
 
 # Configure logging to display debug information
 logging.basicConfig(level=logging.DEBUG)
@@ -48,18 +49,19 @@ async def main() -> None:
             st.session_state.data = []
             start_time = time.perf_counter()
 
-            async with async_playwright() as playwright:
-                # Remove logger=print
-                browser = await playwright.firefox.launch(headless=False)
-                await run(
-                    playwright,
-                    max_scroll=3,
-                    query=f"{str(positions)} in {str(location)}",
-                    browser=browser
-                )
-                display_data()
-                minutes = (time.perf_counter() - start_time) / 60
-                logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
+            # Use Xvfb for a virtual display
+            with Xvfb():
+                async with async_playwright() as playwright:
+                    browser = await playwright.firefox.launch(headless=False)
+                    await run(
+                        playwright,
+                        max_scroll=3,
+                        query=f"{str(positions)} in {str(location)}",
+                        browser=browser
+                    )
+                    display_data()
+                    minutes = (time.perf_counter() - start_time) / 60
+                    logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
     asyncio.run(main())
