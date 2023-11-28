@@ -6,7 +6,8 @@ from playwright.async_api import async_playwright
 import pandas as pd
 from extract import run
 
-logging.basicConfig(level=logging.INFO)  # Change log level to INFO
+# Configure logging to display debug information
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 if 'data' not in st.session_state:
@@ -48,17 +49,17 @@ async def main() -> None:
             start_time = time.perf_counter()
 
             async with async_playwright() as playwright:
-                # Change headless mode to False for troubleshooting
-                browser = await playwright.firefox.launch(headless=False, logger=print)
+                # Remove logger=print
+                browser = await playwright.firefox.launch(headless=False)
                 await run(
                     playwright,
                     max_scroll=3,
                     query=f"{str(positions)} in {str(location)}",
-                    browser=browser  # Pass the browser instance to your run function
+                    browser=browser
                 )
                 display_data()
                 minutes = (time.perf_counter() - start_time) / 60
-                logger.info(f"Time elapsed: {round(minutes, 1)} minutes")
+                logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
     asyncio.run(main())
