@@ -2,7 +2,7 @@ import streamlit as st
 import asyncio
 import time
 import logging
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 import pandas as pd
 from extract import run
 
@@ -33,7 +33,7 @@ def display_data() -> None:
         }
     )
 
-async def main() -> None:
+def main() -> None:
     st.set_page_config(layout="wide")
     st.title("Search Jobs")
     positions = st.text_input("Enter comma separated position titles")
@@ -48,11 +48,11 @@ async def main() -> None:
             st.session_state.data = []
             start_time = time.perf_counter()
 
-            async with async_playwright() as playwright:
+            with sync_playwright() as p:
                 # Ensure headless mode
-                browser = await playwright.firefox.launch(headless=True)
-                await run(
-                    playwright,
+                browser = p.firefox.launch(headless=True)
+                run(
+                    p,
                     max_scroll=3,
                     query=f"{str(positions)} in {str(location)}",
                     browser=browser
@@ -62,4 +62,4 @@ async def main() -> None:
                 logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
