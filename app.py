@@ -1,60 +1,79 @@
-import streamlit as st
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar 20 20:27:50 2023
+@author: RDxR10
+"""
+
 import time
-import logging
-import pandas as pd
-from extract import run
+import csv
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
+import streamlit as st
+from selenium import webdriver
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+# Function to scrape Indeed jobs
+def scrape_indeed_jobs(query, location, num_pages):
+    start_list = [page * 10 for page in range(num_pages)]
+    base_url = 'https://in.indeed.com'
+    
+    driver = webdriver.Chrome(ChromeDriverManager().install())
+    
+    job_data = []
+    
+    for start in start_list:
+        url = base_url + f'/jobs?q={query}&l={location}&start={start}'
+        driver.execute_script(f"window.open('{url}', 'tab{start}');")
+        time.sleep(1)
+    
+    for start in start_list:
+        driver.switch_to.window(f'tab{start}')
+    
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        items = soup.find_all('td', {'class': 'resultContent'})
+    
+        for job in items:
+            s_link = job.find('a').get('href')
+            job_title = job.find('span', title=True).text.strip()
+            company = job.find('span', class_='companyName').text.strip()
+            location = job.find('div', class_='companyLocation').text.strip()
+            if job.find('div', class_='metadata salary-snippet-container'):
+                salary = job.find('div', class_='metadata salary-snippet-container').text
+            elif job.find('div', class_='metadata estimated-salary-container'):
+                salary = job.find('div', class_='metadata estimated-salary-container').text
+            else:
+                salary = ""
+    
+            job_link = base_url + s_link
+    
+            job_data.append([job_title, company, location, job_link, salary])
+    
+    driver.quit()
+    
+    return job_data
 
-if 'data' not in st.session_state:
-    st.session_state.data = []
+# Function to display Streamlit app
+def main():
+    st.title("Indeed Job Scraper")
+    
+    query = st.text_input("Enter job query:")
+    location = st.text_input("Enter job location:")
+    num_pages = st.slider("Number of pages:", 1, 10, 1)
+    
+    if st.button("Scrape Jobs"):
+        job_data = scrape_indeed_jobs(query, location, num_pages)
+        
+        st.write("Scraped Job Data:")
+        st.write(job_data)
+        
+        # Save the data to a CSV file
+        filename = f'{query}_{location}_job_results.csv'
+        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Job Title', 'Company', 'Location', 'Job Link', 'Salary'])
+            writer.writerows(job_data)
+        
+        st.success(f"Data saved to {filename}")
 
-def display_data() -> None:
-    edited_df = st.data_editor(pd.DataFrame(st.session_state.data),
-        column_order=("post_date", 
-                    "title", "location", 
-                    "employer", "salary",
-                    "job_description",
-                    "job_highlights",
-                    "url"),
-        column_config={
-                    "post_date": "Date posted",
-                    "title": "Title",
-                    "location": "Location",
-                    "employer": "Employer",
-                    "salary": "Salary",
-                    "job_description": st.column_config.TextColumn("Description", width="large"),
-                    "job_highlights": st.column_config.TextColumn("Highlights", width="large"),
-                    "url": st.column_config.LinkColumn("URL", width="medium")
-        }
-    )
-
-def run_playwright():
-    loop = st.experimental.thread.get_event_loop()
-    loop.run_until_complete(main())
-
-def main() -> None:
-    """The `main` function uses Playwright to run a search query for a given term in the given location."""
-    st.set_page_config(layout="wide")
-    st.title("Search Jobs")
-    positions = st.text_input("Enter comma separated position titles")
-    location = st.text_input("Enter location")
-
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col3:
-        search = st.button('Search')
-
-    if search:
-        with st.spinner('Extracting data from job portals...'):
-            st.session_state.data = []
-            start_time = time.perf_counter()
-
-            run(playwright, max_scroll=3, query=f"{str(positions)} in {str(location)}", browser=browser)
-            display_data()
-                
-            minutes = (time.perf_counter() - start_time) / 60
-            logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
-
+# Run the Streamlit app
 if __name__ == "__main__":
-    st.thread.run(run_playwright)
+    main()
