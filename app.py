@@ -3,6 +3,7 @@ import asyncio
 import time
 import logging
 from playwright.sync_api import sync_playwright
+import pandas as pd  # Make sure to import pandas
 
 # Configure logging to display debug information
 logging.basicConfig(level=logging.DEBUG)
