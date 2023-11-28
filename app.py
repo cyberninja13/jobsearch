@@ -6,19 +6,21 @@ Created on Mon Mar 20 20:27:50 2023
 
 import time
 import csv
-from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import streamlit as st
 from selenium import webdriver
+import chromedriver_autoinstaller
 
 # Function to scrape Indeed jobs
 def scrape_indeed_jobs(query, location, num_pages):
     start_list = [page * 10 for page in range(num_pages)]
     base_url = 'https://in.indeed.com'
     
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    
     job_data = []
+    
+    chromedriver_autoinstaller.install()  # Automatically installs the latest version of ChromeDriver
+    
+    driver = webdriver.Chrome()
     
     for start in start_list:
         url = base_url + f'/jobs?q={query}&l={location}&start={start}'
