@@ -12,7 +12,27 @@ if 'data' not in st.session_state:
     st.session_state.data = []
 
 def display_data() -> None:
-    # Your display_data implementation
+    edited_df = st.data_editor(pd.DataFrame(st.session_state.data),
+        column_order=("post_date", 
+                    "title", "location", 
+                    "employer", "salary",
+                    "job_description",
+                    "job_highlights",
+                    "url"),
+        column_config={
+                    "post_date": "Date posted",
+                    "title": "Title",
+                    "location": "Location",
+                    "employer": "Employer",
+                    "salary": "Salary",
+                    "job_description": st.column_config.TextColumn("Description", width="large"),
+                    "job_highlights": st.column_config.TextColumn("Highlights", width="large"),
+                    "url": st.column_config.LinkColumn("URL", width="medium")
+        }
+    )
+
+def run(playwright, max_scroll, query, browser):
+    # Your run function implementation
 
 def main() -> None:
     st.set_page_config(layout="wide")
