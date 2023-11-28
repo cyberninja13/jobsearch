@@ -3,36 +3,29 @@
 import csv
 import time
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
-def initiate_driver(location_of_driver, browser):
-    if browser == 'chrome':
-        # Use ChromeDriverManager for development, but specify the local path for deployment
-        if 'exe' in location_of_driver.lower():  # Check if the path contains ".exe" (Windows)
-            return webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver.exe"))
-        else:
-            return webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver"))
-    else:
-        raise ValueError("Unsupported browser type")
+def initiate_driver():
+    return webdriver.Chrome(ChromeDriverManager().install())
 
 def scrape_indeed_jobs(query, location, num_pages):
     start_list = [page * 10 for page in range(num_pages)]
     base_url = 'https://in.indeed.com'
-    location_of_driver = 'jobsearch/drivers'  # Update this with the correct path
-    
+
     job_data = []
 
     for start in start_list:
         url = base_url + f'/jobs?q={query}&l={location}&start={start}'
-        
+
         # Use the initiate_driver function
-        driver = initiate_driver(location_of_driver, 'chrome')
+        driver = initiate_driver()
         driver.get(url)
         time.sleep(1)
-    
+
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         items = soup.find_all('td', {'class': 'resultContent'})
-    
+
         for job in items:
             s_link = job.find('a').get('href')
             job_title = job.find('span', title=True).text.strip()
@@ -44,13 +37,13 @@ def scrape_indeed_jobs(query, location, num_pages):
                 salary = job.find('div', class_='metadata estimated-salary-container').text
             else:
                 salary = ""
-            
+
             job_link = base_url + s_link
-            
+
             job_data.append([job_title, company, location, job_link, salary])
-            
+
         driver.quit()
-    
+
     # Save the data to a CSV file
     filename = f'{query}_{location}_job_results.csv'
     with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
