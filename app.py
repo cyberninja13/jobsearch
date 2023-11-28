@@ -3,8 +3,6 @@ import asyncio
 import time
 import logging
 from playwright.sync_api import sync_playwright
-import pandas as pd
-from extract import run
 
 # Configure logging to display debug information
 logging.basicConfig(level=logging.DEBUG)
@@ -14,24 +12,7 @@ if 'data' not in st.session_state:
     st.session_state.data = []
 
 def display_data() -> None:
-    edited_df = st.data_editor(pd.DataFrame(st.session_state.data),
-        column_order=("post_date", 
-                    "title", "location", 
-                    "employer", "salary",
-                    "job_description",
-                    "job_highlights",
-                    "url"),
-        column_config={
-                    "post_date": "Date posted",
-                    "title": "Title",
-                    "location": "Location",
-                    "employer": "Employer",
-                    "salary": "Salary",
-                    "job_description": st.column_config.TextColumn("Description", width="large"),
-                    "job_highlights": st.column_config.TextColumn("Highlights", width="large"),
-                    "url": st.column_config.LinkColumn("URL", width="medium")
-        }
-    )
+    # Your display_data implementation
 
 def main() -> None:
     st.set_page_config(layout="wide")
@@ -49,7 +30,8 @@ def main() -> None:
             start_time = time.perf_counter()
 
             with sync_playwright() as p:
-                # Use WebKit instead of Firefox
+                # Use Playwright's environment variable to specify the browser executable
+                p._env["WEBKIT_EXECUTABLE_PATH"] = "/usr/bin/webkitgtk"
                 browser = p.webkit.launch(headless=True)
                 run(
                     p,
