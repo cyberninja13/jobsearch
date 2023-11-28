@@ -49,7 +49,7 @@ async def main() -> None:
             start_time = time.perf_counter()
 
             async with async_playwright() as playwright:
-                # Use headless mode in the cloud environment
+                # Ensure headless mode
                 browser = await playwright.firefox.launch(headless=True)
                 await run(
                     playwright,
