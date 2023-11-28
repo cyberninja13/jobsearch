@@ -1,5 +1,4 @@
 import streamlit as st
-import asyncio
 import time
 import logging
 from playwright.async_api import async_playwright
@@ -59,4 +58,4 @@ async def main() -> None:
             logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    st.experimental.asyncio.run(main())
