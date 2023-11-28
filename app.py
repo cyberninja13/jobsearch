@@ -34,8 +34,9 @@ def main():
             start_time = time.perf_counter()
 
             with sync_playwright() as p:
-                p._env["WEBKIT_EXECUTABLE_PATH"] = "/usr/bin/webkitgtk"
-                browser = p.webkit.launch(headless=True)
+                # Change the browser to Google Chrome
+                p._env["CHROME_EXECUTABLE_PATH"] = "/path/to/chrome/executable"
+                browser = p.chromium.launch(headless=True)
                 run(p, max_scroll=3, query=f"{str(positions)} in {str(location)}", browser=browser)
                 display_data()
                 
