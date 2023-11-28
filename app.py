@@ -49,8 +49,8 @@ def main() -> None:
             start_time = time.perf_counter()
 
             with sync_playwright() as p:
-                # Ensure headless mode
-                browser = p.firefox.launch(headless=True)
+                # Use WebKit instead of Firefox
+                browser = p.webkit.launch(headless=True)
                 run(
                     p,
                     max_scroll=3,
