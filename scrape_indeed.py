@@ -3,24 +3,27 @@
 import csv
 import time
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+
+def initiate_driver(location_of_driver, browser):
+    if browser == 'chrome':
+        return webdriver.Chrome(executable_path=(location_of_driver + "/chromedriver"))
+    else:
+        raise ValueError("Unsupported browser type")
 
 def scrape_indeed_jobs(query, location, num_pages):
     start_list = [page * 10 for page in range(num_pages)]
     base_url = 'https://in.indeed.com'
+    location_of_driver = 'drivers'  # Update this with the correct path
     
     job_data = []
 
     for start in start_list:
         url = base_url + f'/jobs?q={query}&l={location}&start={start}'
         
-        # Specify the ChromeDriver version directly
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-gpu')
-        
-        # Use the relative path to chromedriver
-        driver = webdriver.Chrome(executable_path='drivers/chromedriver', options=chrome_options)
+        # Use the initiate_driver function
+        driver = initiate_driver(location_of_driver, 'chrome')
         driver.get(url)
         time.sleep(1)
     
