@@ -1,4 +1,3 @@
-
 import streamlit as st
 import asyncio
 import time
@@ -7,8 +6,7 @@ from playwright.async_api import async_playwright
 import pandas as pd
 from extract import run
 
-
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)  # Change log level to INFO
 logger = logging.getLogger(__name__)
 
 if 'data' not in st.session_state:
@@ -34,33 +32,33 @@ def display_data() -> None:
         }
     )
 
-
 async def main() -> None:
-    """The `main` function uses Playwright to run a search query for a given term in the given location."""
-
     st.set_page_config(layout="wide")
     st.title("Search Jobs")
     positions = st.text_input("Enter comma separated position titles")
     location = st.text_input("Enter location")
 
-    col1, col2, col3 , col4, col5 = st.columns(5)
-    with col3 :
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col3:
         search = st.button('Search')
 
     if search:
         with st.spinner('Extracting data from job portals...'):
             st.session_state.data = []
             start_time = time.perf_counter()
-    
+
             async with async_playwright() as playwright:
+                # Change headless mode to False for troubleshooting
+                browser = await playwright.firefox.launch(headless=False, logger=print)
                 await run(
                     playwright,
                     max_scroll=3,
                     query=f"{str(positions)} in {str(location)}",
+                    browser=browser  # Pass the browser instance to your run function
                 )
-            display_data()
-            minutes = (time.perf_counter() - start_time) / 60
-            logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
+                display_data()
+                minutes = (time.perf_counter() - start_time) / 60
+                logger.info(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
     asyncio.run(main())
