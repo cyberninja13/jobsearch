@@ -1,86 +1,66 @@
+
 import streamlit as st
-import requests
-from bs4 import BeautifulSoup
+import asyncio
+import time
+import logging
+from playwright.async_api import async_playwright
 import pandas as pd
-from rich.console import Console
-from rich.table import Table
+from extract import run
 
-# Function to scrape job description
-def scrapeJobDescription(url):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    try:
-        jobDescription = soup.find("div", class_="show-more-less-html__markup").text.strip()
-        return jobDescription
-    except AttributeError:
-        return ""
 
-# Function to scrape LinkedIn jobs
-def scrapeLinkedin(inputJobTitle, inputJobLocation, page):
-    jobs_per_page = 20
-    counter = (page - 1) * jobs_per_page
-    pageCounter = page
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-    scraped_jobs = []
+if 'data' not in st.session_state:
+    st.session_state.data = []
 
-    try:
-        url = f"https://indeed.com/jobs?q={inputJobTitle}&l={inputJobLocation}&from=search"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
+def display_data() -> None:
+    edited_df = st.data_editor(pd.DataFrame(st.session_state.data),
+        column_order=("post_date", 
+                    "title", "location", 
+                    "employer", "salary",
+                    "job_description",
+                    "job_highlights",
+                    "url"),
+        column_config={
+                    "post_date": "Date posted",
+                    "title": "Title",
+                    "location": "Location",
+                    "employer": "Employer",
+                    "salary": "Salary",
+                    "job_description": st.column_config.TextColumn("Description", width="large"),
+                    "job_highlights": st.column_config.TextColumn("Highlights", width="large"),
+                    "url": st.column_config.LinkColumn("URL", width="medium")
+        }
+    )
 
-        jobs = soup.select("li.jobs-search__result-item")
 
-        for job in jobs:
-            jobTitle = job.select_one("h3.base-search-card__title").text.strip()
-            jobLocation = job.select_one("span.job-search-card__location").text.strip()
-            jobCompany = job.select_one("h4.base-search-card__subtitle").text.strip()
-            jobLink = job.select_one("a")["href"]
+async def main() -> None:
+    """The `main` function uses Playwright to run a search query for a given term in the given location."""
 
-            jobDescription = scrapeJobDescription(jobLink)
+    st.set_page_config(layout="wide")
+    st.title("Search Jobs")
+    positions = st.text_input("Enter comma separated position titles")
+    location = st.text_input("Enter location")
 
-            if jobTitle and jobLocation and jobCompany and jobLink:
-                scraped_jobs.append([jobTitle, jobLocation, jobCompany, jobLink, jobDescription])
+    col1, col2, col3 , col4, col5 = st.columns(5)
+    with col3 :
+        search = st.button('Search')
 
-        return scraped_jobs
-
-    except requests.RequestException as e:
-        st.error(f"An error occurred: {e}")
-        return []
-
-# Streamlit UI
-def main():
-    st.title("Indeed Job Scraper")
-
-    # Get user input using Streamlit
-    inputJobTitle = st.text_input("Enter Job Title:")
-    inputJobLocation = st.text_input("Enter Job Location:")
-
-    # Get page number from user input
-    page = st.number_input("Enter Page Number:", min_value=1, value=1, step=1)
-
-    if st.button("Scrape Indeed"):
-        scraped_jobs = scrapeLinkedin(inputJobTitle, inputJobLocation, page)
-
-        # Display 20 jobs in a table
-        if scraped_jobs:
-            console = Console()
-            table = Table(show_header=True, header_style="bold")
-            table.add_column("Title")
-            table.add_column("Company")
-            table.add_column("Location")
-            table.add_column("Link")
-            table.add_column("Description")
-
-            for job in scraped_jobs:
-                table.add_row(job[0], job[2], job[1], job[3], job[4][:20] + "...")
-
-            console.print(table)
-
-            # Save results locally using Streamlit
-            if st.button("Save Results Locally"):
-                df = pd.DataFrame(scraped_jobs, columns=["Title", "Company", "Location", "Link", "Description"])
-                df.to_csv(f"{inputJobTitle}_{inputJobLocation}_jobs.csv", index=False)
-                st.success("Results saved successfully!")
+    if search:
+        with st.spinner('Extracting data from job portals...'):
+            st.session_state.data = []
+            start_time = time.perf_counter()
+    
+            async with async_playwright() as playwright:
+                await run(
+                    playwright,
+                    max_scroll=3,
+                    query=f"{str(positions)} in {str(location)}",
+                )
+            display_data()
+            minutes = (time.perf_counter() - start_time) / 60
+            logger.debug(f"Time elapsed: {round(minutes, 1)} minutes")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
