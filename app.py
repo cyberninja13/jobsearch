@@ -13,6 +13,9 @@ def load_data():
 def main():
     st.title("Job Search App")
 
+    # Set the page width
+    st.set_page_config(layout="wide")
+
     # Load data
     df = load_data()
 
@@ -23,7 +26,7 @@ def main():
         # Filter data based on Job Title
         filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
 
-        # Display the filtered data in a larger table
+        # Display the filtered data in a wider table
         st.table(filtered_df)
 
 if __name__ == "__main__":
