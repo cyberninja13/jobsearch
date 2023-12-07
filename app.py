@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 def load_data():
-    file_path = "your_excel_file.xlsx"  # Replace with your actual file name
+    file_path = "Data.xlsx"  # Replace with your actual file name
     try:
         df = pd.read_excel(file_path)
         return df
