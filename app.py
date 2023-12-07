@@ -10,11 +10,11 @@ def load_data():
         st.error(f"Error loading data: {e}")
         return None
 
+# Set the page width outside of the main function
+st.set_page_config(layout="wide")
+
 def main():
     st.title("Job Search App")
-
-    # Set the page width
-    st.set_page_config(layout="wide")
 
     # Load data
     df = load_data()
