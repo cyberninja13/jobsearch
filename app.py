@@ -23,11 +23,13 @@ def main():
         # Job Title search input
         job_title_search = st.text_input("Enter Job Title to search:", "")
 
-        # Filter data based on Job Title
-        filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
+        # Search button
+        if st.button("Search"):
+            # Filter data based on Job Title
+            filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
 
-        # Display the filtered data in a wider table
-        st.table(filtered_df)
+            # Display the filtered data in a wider table
+            st.table(filtered_df)
 
 if __name__ == "__main__":
     main()
