@@ -31,11 +31,11 @@ def main():
             # Filter data based on Job Title
             filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)].copy()
 
-            # Replace the "Link" column with clickable links
-            filtered_df['Link'] = filtered_df['Link'].apply(make_clickable)
+            # Apply clickable links to the "Link" column
+            filtered_df["Link"] = filtered_df["Link"].apply(make_clickable)
 
-            # Display the filtered data with st.dataframe
-            st.dataframe(filtered_df, unsafe_allow_html=True)
+            # Display the filtered data in a wider table
+            st.table(filtered_df)
 
 if __name__ == "__main__":
     main()
