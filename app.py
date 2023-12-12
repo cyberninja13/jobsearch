@@ -21,8 +21,8 @@ def render_links_table(data):
     clickable_links_df = pd.DataFrame(data)
     clickable_links_df['Link'] = clickable_links_df['Link'].apply(make_clickable)
 
-    # Display the DataFrame with st.table
-    st.table(clickable_links_df)
+    # Display the DataFrame with st.write
+    st.write(clickable_links_df, unsafe_allow_html=True)
 
 def main():
     st.title("Job Search App")
