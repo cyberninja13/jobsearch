@@ -16,15 +16,6 @@ st.set_page_config(layout="wide")
 def make_clickable(link):
     return f'<a href="{link}" target="_blank">{link}</a>'
 
-def render_links_table(data):
-    # Create a new DataFrame with clickable links
-    clickable_links_df = pd.DataFrame(data)
-    clickable_links_df['Link'] = clickable_links_df['Link'].apply(make_clickable)
-
-    # Display the DataFrame with st.markdown
-    for index, row in clickable_links_df.iterrows():
-        st.markdown(row)
-
 def main():
     st.title("Job Search App")
 
@@ -40,8 +31,11 @@ def main():
             # Filter data based on Job Title
             filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)].copy()
 
-            # Render the table with clickable links
-            render_links_table(filtered_df['Link'])
+            # Replace the "Link" column with clickable links
+            filtered_df['Link'] = filtered_df['Link'].apply(make_clickable)
+
+            # Display the filtered data with st.dataframe
+            st.dataframe(filtered_df, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
