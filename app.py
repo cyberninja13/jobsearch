@@ -35,8 +35,25 @@ def main():
             filtered_df["Link"] = filtered_df["Link"].apply(make_clickable)
 
             # Display the filtered data with st.markdown
-            st.markdown("<style>table{color:black}</style>", unsafe_allow_html=True)
-            st.write("<style>table {border-collapse: collapse; width: 100%; color: black;} th, td {border: 1px solid black; padding: 8px; text-align: left;}</style>", unsafe_allow_html=True)
+            st.markdown(
+                """
+                <style>
+                    table {
+                        color: black;
+                        user-select: none; /* Disable text selection */
+                        -moz-user-select: none;
+                        -webkit-user-select: none;
+                        -ms-user-select: none;
+                    }
+                    th, td {
+                        border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                </style>
+                """, 
+                unsafe_allow_html=True
+            )
 
             # Explicitly include all columns
             st.markdown(filtered_df.to_html(escape=False, index=False), unsafe_allow_html=True)
