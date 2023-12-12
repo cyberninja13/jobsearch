@@ -29,10 +29,13 @@ def main():
         # Search button
         if st.button("Search"):
             # Filter data based on Job Title
-            filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
+            filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)].copy()
 
-            # Display the filtered data with clickable links
-            st.dataframe(filtered_df.style.format({'Link': make_clickable}), unsafe_allow_html=True)
+            # Create a new column with clickable links
+            filtered_df['Link'] = filtered_df['Link'].apply(make_clickable)
+
+            # Display the new DataFrame
+            st.dataframe(filtered_df, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
