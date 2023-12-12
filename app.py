@@ -31,8 +31,8 @@ def main():
             # Filter data based on Job Title
             filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
 
-            # Display the filtered data in a wider table
-            st.table(filtered_df.style.format({'Link': make_clickable}))
+            # Display the filtered data with clickable links
+            st.dataframe(filtered_df.style.format({'Link': make_clickable}), unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
