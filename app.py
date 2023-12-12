@@ -21,8 +21,9 @@ def render_links_table(data):
     clickable_links_df = pd.DataFrame(data)
     clickable_links_df['Link'] = clickable_links_df['Link'].apply(make_clickable)
 
-    # Display the DataFrame with st.write
-    st.write(clickable_links_df, unsafe_allow_html=True)
+    # Display the DataFrame with st.markdown
+    for index, row in clickable_links_df.iterrows():
+        st.markdown(row)
 
 def main():
     st.title("Job Search App")
@@ -40,7 +41,7 @@ def main():
             filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)].copy()
 
             # Render the table with clickable links
-            render_links_table(filtered_df)
+            render_links_table(filtered_df['Link'])
 
 if __name__ == "__main__":
     main()
