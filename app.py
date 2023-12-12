@@ -17,7 +17,7 @@ def make_clickable(link):
     return f'<a href="{link}" target="_blank">{link}</a>'
 
 def main():
-    st.title("Job Search App")
+    st.title("HiresMe.ai Job Search - Linkedin, Indeed, Monster, Glassdoor ")
 
     # Load data
     df = load_data()
