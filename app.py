@@ -37,5 +37,8 @@ def main():
             # Display the filtered data in a wider table
             st.table(filtered_df)
 
+            # Display a clickable link using st.write
+            st.write("<a href='https://www.example.com' target='_blank'>Click me</a>", unsafe_allow_html=True)
+
 if __name__ == "__main__":
     main()
