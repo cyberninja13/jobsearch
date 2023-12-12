@@ -32,7 +32,7 @@ def main():
         # Search button
         if st.button("Search"):
             # Filter data based on Job Title
-            filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)].copy()
+            filtered_df = df[df["A"].str.contains(job_title_search, case=False)].copy()
 
             # Apply clickable links to the "Link" column
             filtered_df["Link"] = filtered_df["Link"].apply(make_clickable)
