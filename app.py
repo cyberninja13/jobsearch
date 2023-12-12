@@ -34,8 +34,10 @@ def main():
             # Apply clickable links to the "Link" column
             filtered_df["Link"] = filtered_df["Link"].apply(make_clickable)
 
-            # Display the filtered data with st.write and st.markdown
-            st.write(filtered_df.to_markdown(escape=False), unsafe_allow_html=True)
+            # Display the filtered data with st.markdown
+            st.markdown("<style>table{color:white}</style>", unsafe_allow_html=True)
+            st.write("<style>table {border-collapse: collapse; width: 100%;} th, td {border: 1px solid white; padding: 8px; text-align: left;}</style>", unsafe_allow_html=True)
+            st.markdown(filtered_df.to_html(escape=False, index=False), unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
