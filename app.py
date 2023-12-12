@@ -23,6 +23,9 @@ def main():
     df = load_data()
 
     if df is not None:
+        # Print column names
+        st.write("Column Names:", df.columns.tolist())
+
         # Job Title search input
         job_title_search = st.text_input("Enter Job Title to search:", "")
 
@@ -32,13 +35,13 @@ def main():
         # Search button
         if st.button("Search"):
             # Filter data based on Job Title
-            filtered_df = df[df["A"].str.contains(job_title_search, case=False)].copy()
+            filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)].copy()
 
             # Apply clickable links to the "Link" column
             filtered_df["Link"] = filtered_df["Link"].apply(make_clickable)
 
             # Display the filtered data with st.dataframe and pagination
-            st.dataframe(filtered_df[['A', 'B', 'C', 'Link']].head(columns_per_page), unsafe_allow_html=True)
+            st.dataframe(filtered_df[['Job Title', 'Company', 'Location', 'Link']].head(columns_per_page), unsafe_allow_html=True)
 
             # Allow pagination with checkboxes
             show_additional_pages = st.checkbox("Show additional pages")
