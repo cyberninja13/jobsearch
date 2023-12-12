@@ -34,8 +34,8 @@ def main():
             # Apply clickable links to the "Link" column
             filtered_df["Link"] = filtered_df["Link"].apply(make_clickable)
 
-            # Display the filtered data with only the "Link" column as hyperlinks
-            st.table(filtered_df[['Link']], unsafe_allow_html=True)
+            # Display the filtered data with st.dataframe and HTML formatting
+            st.dataframe(filtered_df, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
