@@ -32,7 +32,7 @@ def main():
             filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
 
             # Display the filtered data with clickable links
-            st.dataframe(filtered_df.style.format({'Link': make_clickable}), unsafe_allow_html=True)
+            st.dataframe(filtered_df.style.format({'links': make_clickable}), unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
