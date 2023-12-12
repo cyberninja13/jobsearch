@@ -13,6 +13,9 @@ def load_data():
 # Set the page width outside of the main function
 st.set_page_config(layout="wide")
 
+def make_clickable(link):
+    return f'<a href="{link}" target="_blank">{link}</a>'
+
 def main():
     st.title("Job Search App")
 
@@ -29,7 +32,7 @@ def main():
             filtered_df = df[df["Job Title"].str.contains(job_title_search, case=False)]
 
             # Display the filtered data in a wider table
-            st.table(filtered_df)
+            st.table(filtered_df.style.format({'links': make_clickable}))
 
 if __name__ == "__main__":
     main()
